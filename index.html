@@ -1,0 +1,1112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3b145b">
+  <title>Ayana's Grape Vocab Game - Lesson 11</title>
+  <style>
+    :root {
+      --plum-950: #2a0c40;
+      --plum-900: #35104f;
+      --plum-800: #4a176c;
+      --grape-700: #6d28a3;
+      --grape-600: #7c3bb4;
+      --grape-500: #9555ca;
+      --cream: #fffaf0;
+      --paper: rgba(255, 252, 246, 0.96);
+      --ink: #24152f;
+      --muted: #6d6174;
+      --leaf: #4f7d39;
+      --leaf-dark: #315c2a;
+      --gold: #f5c05a;
+      --green: #237a4b;
+      --green-soft: #e4f6ea;
+      --red: #b73545;
+      --red-soft: #fff0f1;
+      --shadow: 0 22px 70px rgba(28, 8, 44, 0.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-height: 100%; }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(189, 127, 229, 0.34), transparent 42%),
+        linear-gradient(145deg, var(--plum-950), var(--plum-800) 52%, #2b4f36 150%);
+    }
+
+    button { font: inherit; }
+
+    .background-art {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.92;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.16;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+    }
+
+    .app-shell {
+      width: min(1040px, calc(100% - 32px));
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: max(24px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom));
+      display: grid;
+      place-items: center;
+    }
+
+    .screen {
+      width: 100%;
+      animation: rise 500ms cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .screen[hidden] { display: none !important; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+      color: #684385;
+      font-size: 0.77rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 22px;
+      height: 2px;
+      border-radius: 99px;
+      background: var(--grape-500);
+      content: "";
+    }
+
+    .welcome-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      width: min(880px, 100%);
+      min-height: 590px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 38px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .welcome-copy {
+      padding: clamp(42px, 7vw, 76px);
+      align-self: center;
+    }
+
+    .welcome-copy h1 {
+      max-width: 520px;
+      margin: 0;
+      color: var(--plum-950);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 7vw, 5.8rem);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: -0.055em;
+    }
+
+    .welcome-copy h1 span {
+      display: block;
+      color: var(--grape-700);
+      font-style: italic;
+    }
+
+    .welcome-copy .lead {
+      max-width: 440px;
+      margin: 24px 0 30px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.16rem);
+      line-height: 1.65;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .next-button,
+    .icon-button {
+      min-height: 52px;
+      border-radius: 16px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .primary-button,
+    .next-button {
+      padding: 0 24px;
+      color: white;
+      background: linear-gradient(135deg, var(--grape-700), var(--plum-800));
+      box-shadow: 0 12px 24px rgba(81, 29, 116, 0.28);
+    }
+
+    .primary-button:hover,
+    .next-button:hover,
+    .secondary-button:hover,
+    .icon-button:hover { transform: translateY(-2px); }
+
+    .primary-button:focus-visible,
+    .next-button:focus-visible,
+    .secondary-button:focus-visible,
+    .icon-button:focus-visible,
+    .answer-button:focus-visible {
+      outline: 4px solid rgba(245, 192, 90, 0.78);
+      outline-offset: 3px;
+    }
+
+    .primary-button .arrow,
+    .next-button .arrow { margin-left: 10px; }
+
+    .welcome-meta {
+      margin-top: 24px;
+      display: flex;
+      gap: 16px;
+      color: #7d7084;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .welcome-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .welcome-meta span::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--leaf);
+      content: "";
+    }
+
+    .welcome-visual {
+      position: relative;
+      min-height: 360px;
+      overflow: hidden;
+      background:
+        linear-gradient(155deg, rgba(92, 41, 124, 0.18), rgba(40, 87, 48, 0.08)),
+        #f0e8f3;
+    }
+
+    .welcome-visual::after {
+      position: absolute;
+      inset: auto 0 0;
+      height: 38%;
+      background: linear-gradient(to top, rgba(46, 73, 43, 0.24), transparent);
+      content: "";
+    }
+
+    .hero-grapes {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 22px 24px rgba(49, 16, 67, 0.22));
+      transform: scale(1.05);
+    }
+
+    .lesson-seal {
+      position: absolute;
+      right: 24px;
+      bottom: 24px;
+      z-index: 2;
+      width: 116px;
+      height: 116px;
+      border: 1px solid rgba(255, 255, 255, 0.76);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      text-align: center;
+      background: rgba(49, 20, 69, 0.82);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 34px rgba(35, 10, 50, 0.3);
+    }
+
+    .lesson-seal strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2.5rem;
+      line-height: 0.9;
+    }
+
+    .lesson-seal small {
+      display: block;
+      margin-top: 5px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .game-wrap { width: min(920px, 100%); margin: auto; }
+
+    .game-topbar {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: white;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.14);
+      backdrop-filter: blur(8px);
+    }
+
+    .icon-button {
+      min-height: 42px;
+      padding: 0 15px;
+      border: 1px solid rgba(255,255,255,.28);
+      color: white;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(8px);
+    }
+
+    .progress-panel {
+      margin-bottom: 14px;
+      padding: 15px 18px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 20px;
+      color: white;
+      background: rgba(43, 13, 63, .46);
+      backdrop-filter: blur(14px);
+    }
+
+    .progress-labels {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .progress-labels .score-live { color: #ffe3a5; }
+
+    .progress-track {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: rgba(255,255,255,.18);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold), #ffe6a7);
+      transition: width 360ms ease;
+    }
+
+    .quiz-card {
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 30px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .word-stage {
+      position: relative;
+      min-height: 255px;
+      padding: 40px 28px 34px;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0, rgba(149,85,202,.13), transparent 58%),
+        linear-gradient(180deg, #fffdf8, #faf4f7);
+    }
+
+    .word-stage::before,
+    .word-stage::after {
+      position: absolute;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(176,112,210,.22), rgba(109,40,163,.05) 62%, transparent 64%);
+      content: "";
+    }
+
+    .word-stage::before { top: -35px; left: -20px; }
+    .word-stage::after { right: -25px; bottom: -40px; }
+
+    .question-kicker {
+      margin: 0 0 10px;
+      color: #816b8a;
+      font-size: 0.76rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hanzi {
+      margin: 0;
+      color: var(--plum-950);
+      font-family: "Noto Serif TC", "PingFang TC", "Microsoft JhengHei", serif;
+      font-size: clamp(3.35rem, 10vw, 6.4rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: 0.03em;
+      overflow-wrap: anywhere;
+    }
+
+    .pinyin {
+      margin: 14px 0 0;
+      color: var(--grape-700);
+      font-size: clamp(1.05rem, 3vw, 1.4rem);
+      font-weight: 750;
+      letter-spacing: 0.06em;
+    }
+
+    .answer-area {
+      padding: clamp(20px, 4vw, 34px);
+      border-top: 1px solid #eadfeb;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .answer-button {
+      position: relative;
+      min-height: 72px;
+      padding: 14px 16px 14px 54px;
+      border: 2px solid #e3d8e6;
+      border-radius: 16px;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      background: white;
+      box-shadow: 0 5px 0 #e9e0ea;
+      transition: border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .answer-button:hover:not(:disabled) {
+      border-color: #b992d0;
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #e1d4e4;
+    }
+
+    .answer-button:disabled { cursor: default; opacity: 1; }
+
+    .option-letter {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: #6a5375;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: #f2eaf4;
+      transform: translateY(-50%);
+    }
+
+    .answer-button.correct {
+      border-color: var(--green);
+      color: #155c38;
+      background: var(--green-soft);
+      box-shadow: 0 5px 0 #abd7b9;
+    }
+
+    .answer-button.correct .option-letter { color: white; background: var(--green); }
+
+    .answer-button.wrong {
+      border-color: var(--red);
+      color: #8c2534;
+      background: var(--red-soft);
+      box-shadow: 0 5px 0 #e7b4b9;
+    }
+
+    .answer-button.wrong .option-letter { color: white; background: var(--red); }
+
+    .feedback-row {
+      min-height: 78px;
+      margin-top: 18px;
+      padding-top: 17px;
+      border-top: 1px solid #ede4ed;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .feedback {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .feedback[hidden] { display: none; }
+
+    .feedback-icon {
+      flex: 0 0 auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      background: var(--green);
+    }
+
+    .feedback.is-wrong .feedback-icon { background: var(--red); }
+
+    .feedback strong { display: block; margin-top: 1px; }
+
+    .feedback p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .next-button { flex: 0 0 auto; min-width: 128px; }
+    .next-button[hidden] { display: none; }
+
+    .finish-card {
+      position: relative;
+      overflow: hidden;
+      width: min(680px, 100%);
+      margin: auto;
+      padding: clamp(36px, 7vw, 70px);
+      border: 1px solid rgba(255,255,255,.48);
+      border-radius: 34px;
+      text-align: center;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .finish-card::before {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 9px;
+      background: linear-gradient(90deg, var(--leaf), var(--gold), var(--grape-600));
+      content: "";
+    }
+
+    .score-medallion {
+      position: relative;
+      width: 176px;
+      height: 176px;
+      margin: 0 auto 26px;
+      border: 10px solid #efe4f0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: white;
+      box-shadow: inset 0 0 0 2px #dfcce4, 0 18px 38px rgba(68, 26, 92, .16);
+    }
+
+    .score-medallion::after {
+      position: absolute;
+      inset: 9px;
+      border: 2px dashed #c7a7d3;
+      border-radius: inherit;
+      content: "";
+    }
+
+    .score-number {
+      position: relative;
+      z-index: 1;
+      color: var(--grape-700);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 4.2rem;
+      font-weight: 800;
+      line-height: .85;
+    }
+
+    .score-number small {
+      display: block;
+      margin-top: 8px;
+      color: #7b6882;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: .76rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .finish-card h2 {
+      margin: 0;
+      color: var(--plum-950);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 6vw, 3.7rem);
+      letter-spacing: -.04em;
+    }
+
+    .finish-summary {
+      margin: 14px auto 28px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .finish-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .secondary-button {
+      padding: 0 22px;
+      border: 2px solid #d8c8dd;
+      color: var(--plum-800);
+      background: white;
+    }
+
+    .secondary-button[hidden] { display: none; }
+
+    .tiny-note {
+      margin: 22px 0 0;
+      color: #8a7d8f;
+      font-size: .82rem;
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { width: min(100% - 20px, 620px); padding-top: 10px; padding-bottom: 10px; }
+      .welcome-card { grid-template-columns: 1fr; min-height: auto; border-radius: 28px; }
+      .welcome-copy { padding: 42px 30px 34px; }
+      .welcome-copy h1 { font-size: clamp(3rem, 15vw, 4.8rem); }
+      .welcome-visual { min-height: 245px; }
+      .hero-grapes { transform: scale(1.15) translateY(-2%); }
+      .lesson-seal { width: 92px; height: 92px; right: 18px; bottom: 18px; }
+      .lesson-seal strong { font-size: 2rem; }
+      .game-topbar { padding: 0 4px; }
+      .brand span:last-child { display: none; }
+      .quiz-card { border-radius: 23px; }
+      .word-stage { min-height: 220px; }
+      .answer-grid { grid-template-columns: 1fr; }
+      .answer-button { min-height: 64px; }
+      .feedback-row { align-items: stretch; flex-direction: column; }
+      .next-button { width: 100%; }
+      .finish-card { border-radius: 26px; }
+    }
+
+    @media (max-width: 430px) {
+      .welcome-meta { flex-direction: column; gap: 6px; }
+      .welcome-copy { padding-inline: 24px; }
+      .answer-area { padding: 16px; }
+      .word-stage { min-height: 190px; padding: 30px 18px 26px; }
+      .hanzi { font-size: clamp(2.7rem, 16vw, 4.2rem); }
+      .pinyin { margin-top: 9px; }
+      .progress-panel { padding: 13px 14px; }
+      .finish-actions { flex-direction: column; }
+      .finish-actions button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 1ms !important; transition-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="background-art" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="grapeLight" cx="35%" cy="28%" r="72%">
+        <stop offset="0" stop-color="#b983db"/>
+        <stop offset="0.55" stop-color="#71359a"/>
+        <stop offset="1" stop-color="#41175c"/>
+      </radialGradient>
+      <linearGradient id="leafLight" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0" stop-color="#80a957"/>
+        <stop offset="1" stop-color="#315c2a"/>
+      </linearGradient>
+      <filter id="blur"><feGaussianBlur stdDeviation="3"/></filter>
+    </defs>
+    <path d="M-70 150 C260 10 400 130 560 -55 M1050 -50 C1180 120 1450 30 1680 170" fill="none" stroke="#66884b" stroke-width="15" opacity=".65"/>
+    <g opacity=".68" transform="translate(35 90) rotate(-11)">
+      <path d="M50 95 C82 12 176 15 208 81 C143 80 111 126 50 95Z" fill="url(#leafLight)"/>
+      <path d="M200 80 C249 26 326 51 331 123 C276 98 242 132 200 80Z" fill="#527f39"/>
+      <g fill="url(#grapeLight)" stroke="#c19add" stroke-opacity=".25" stroke-width="2">
+        <circle cx="184" cy="138" r="38"/><circle cx="238" cy="139" r="39"/><circle cx="291" cy="153" r="37"/>
+        <circle cx="161" cy="190" r="39"/><circle cx="216" cy="195" r="40"/><circle cx="272" cy="204" r="39"/>
+        <circle cx="189" cy="247" r="40"/><circle cx="247" cy="253" r="40"/>
+        <circle cx="219" cy="307" r="39"/>
+      </g>
+    </g>
+    <g opacity=".56" transform="translate(1290 680) scale(.9) rotate(13)">
+      <path d="M14 66 C61 -5 142 12 163 76 C103 67 71 105 14 66Z" fill="url(#leafLight)"/>
+      <g fill="url(#grapeLight)" stroke="#c19add" stroke-opacity=".22" stroke-width="2">
+        <circle cx="118" cy="115" r="37"/><circle cx="171" cy="119" r="38"/><circle cx="218" cy="142" r="37"/>
+        <circle cx="97" cy="170" r="39"/><circle cx="150" cy="177" r="40"/><circle cx="205" cy="190" r="39"/>
+        <circle cx="124" cy="228" r="40"/><circle cx="182" cy="235" r="40"/>
+        <circle cx="153" cy="289" r="39"/>
+      </g>
+    </g>
+    <circle cx="1150" cy="255" r="150" fill="#a15ec9" opacity=".08" filter="url(#blur)"/>
+    <circle cx="410" cy="820" r="190" fill="#dfbdf0" opacity=".06" filter="url(#blur)"/>
+  </svg>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <section class="screen" id="welcomeScreen" aria-labelledby="welcomeTitle">
+      <div class="welcome-card">
+        <div class="welcome-copy">
+          <p class="eyebrow">Mandarin · Lesson 11</p>
+          <h1 id="welcomeTitle">Welcome,<span>Ayana!</span></h1>
+          <p class="lead">Pick the right English meaning for each word. Grow your vocabulary one grape at a time.</p>
+          <div class="button-row">
+            <button class="primary-button" id="startButton" type="button">Start Game <span class="arrow" aria-hidden="true">→</span></button>
+          </div>
+          <div class="welcome-meta" aria-label="Game details">
+            <span>93 words</span>
+            <span>4 choices</span>
+            <span>Works offline</span>
+          </div>
+        </div>
+        <div class="welcome-visual" aria-hidden="true">
+          <svg class="hero-grapes" viewBox="0 0 520 700" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="heroBerry" cx="32%" cy="25%" r="75%">
+                <stop offset="0" stop-color="#d6a6eb"/>
+                <stop offset=".45" stop-color="#8650ad"/>
+                <stop offset="1" stop-color="#45205f"/>
+              </radialGradient>
+              <linearGradient id="heroLeaf" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#8ebc67"/>
+                <stop offset="1" stop-color="#345e31"/>
+              </linearGradient>
+            </defs>
+            <path d="M260 -40 C246 76 209 117 155 175" fill="none" stroke="#4c6b35" stroke-width="15"/>
+            <path d="M237 106 C120 42 32 109 28 221 C115 188 189 220 237 106Z" fill="url(#heroLeaf)"/>
+            <path d="M238 109 C329 28 450 68 473 194 C377 149 306 211 238 109Z" fill="#4c783d"/>
+            <g fill="url(#heroBerry)" stroke="#f2d7ff" stroke-opacity=".32" stroke-width="3">
+              <circle cx="191" cy="190" r="65"/><circle cx="280" cy="183" r="67"/><circle cx="357" cy="216" r="63"/>
+              <circle cx="145" cy="269" r="66"/><circle cx="237" cy="272" r="69"/><circle cx="329" cy="290" r="67"/>
+              <circle cx="394" cy="306" r="61"/><circle cx="182" cy="363" r="68"/><circle cx="278" cy="373" r="70"/>
+              <circle cx="358" cy="397" r="66"/><circle cx="224" cy="463" r="68"/><circle cx="317" cy="480" r="66"/>
+              <circle cx="273" cy="565" r="68"/>
+            </g>
+            <g fill="none" stroke="#f4ddff" stroke-linecap="round" opacity=".44">
+              <path d="M165 164 C177 149 193 143 210 144" stroke-width="8"/>
+              <path d="M255 156 C269 140 287 137 302 141" stroke-width="8"/>
+              <path d="M115 244 C129 228 146 225 162 228" stroke-width="8"/>
+              <path d="M207 247 C222 230 239 228 255 231" stroke-width="8"/>
+              <path d="M249 538 C264 522 281 519 297 523" stroke-width="8"/>
+            </g>
+          </svg>
+          <div class="lesson-seal"><div><strong>11</strong><small>Metro words</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="gameScreen" aria-labelledby="hanziWord" hidden>
+      <div class="game-wrap">
+        <header class="game-topbar">
+          <div class="brand"><span class="brand-mark" aria-hidden="true">🍇</span><span>Grapevine Words</span></div>
+          <button class="icon-button" id="homeButton" type="button">Home</button>
+        </header>
+        <div class="progress-panel">
+          <div class="progress-labels">
+            <span id="questionCount">Question 1 / 93</span>
+            <span class="score-live" id="liveScore">Correct: 0</span>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <article class="quiz-card">
+          <div class="word-stage">
+            <p class="question-kicker">What does this mean?</p>
+            <h2 class="hanzi" id="hanziWord" lang="zh-Hant">捷運</h2>
+            <p class="pinyin" id="pinyinWord" lang="zh-Latn">jiéyùn</p>
+          </div>
+          <div class="answer-area">
+            <div class="answer-grid" id="answerGrid" aria-label="Answer choices"></div>
+            <div class="feedback-row">
+              <div class="feedback" id="feedback" role="status" aria-live="polite" hidden>
+                <span class="feedback-icon" id="feedbackIcon" aria-hidden="true">✓</span>
+                <div>
+                  <strong id="feedbackTitle">Correct!</strong>
+                  <p id="feedbackText"></p>
+                </div>
+              </div>
+              <button class="next-button" id="nextButton" type="button" hidden>Next <span class="arrow" aria-hidden="true">→</span></button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="finishScreen" aria-labelledby="finishTitle" hidden>
+      <div class="finish-card">
+        <div class="score-medallion" aria-label="Final score">
+          <div class="score-number"><span id="finalScore">100</span><small>out of 100</small></div>
+        </div>
+        <p class="eyebrow" id="finishEyebrow">Round complete</p>
+        <h2 id="finishTitle">Great work, Ayana!</h2>
+        <p class="finish-summary" id="finishSummary">You answered 93 of 93 words correctly.</p>
+        <div class="finish-actions">
+          <button class="primary-button" id="restartButton" type="button">Restart Full Game</button>
+          <button class="secondary-button" id="reviewButton" type="button">Review Mistakes</button>
+        </div>
+        <p class="tiny-note" id="finishNote">Keep going - every review makes the words easier.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    "use strict";
+
+    const vocabulary = [
+      { hanzi: "捷運", pinyin: "jiéyùn", meaning: "MRT / metro" },
+      { hanzi: "車站", pinyin: "chēzhàn", meaning: "station" },
+      { hanzi: "月台", pinyin: "yuètái", meaning: "platform" },
+      { hanzi: "出口", pinyin: "chūkǒu", meaning: "exit" },
+      { hanzi: "刷卡", pinyin: "shuākǎ", meaning: "tap a card" },
+      { hanzi: "加值", pinyin: "jiāzhí", meaning: "top up" },
+      { hanzi: "轉乘", pinyin: "zhuǎnchéng", meaning: "transfer" },
+      { hanzi: "上車", pinyin: "shàngchē", meaning: "get on" },
+      { hanzi: "下車", pinyin: "xiàchē", meaning: "get off" },
+      { hanzi: "往", pinyin: "wǎng", meaning: "toward" },
+      { hanzi: "到", pinyin: "dào", meaning: "to / arrive" },
+      { hanzi: "悠遊卡", pinyin: "yōuyóukǎ", meaning: "EasyCard" },
+      { hanzi: "進站", pinyin: "jìnzhàn", meaning: "enter a station" },
+      { hanzi: "出站", pinyin: "chūzhàn", meaning: "leave a station" },
+      { hanzi: "路線", pinyin: "lùxiàn", meaning: "route" },
+      { hanzi: "方向", pinyin: "fāngxiàng", meaning: "direction" },
+      { hanzi: "站名", pinyin: "zhànmíng", meaning: "station name" },
+      { hanzi: "終點", pinyin: "zhōngdiǎn", meaning: "terminal" },
+      { hanzi: "起點", pinyin: "qǐdiǎn", meaning: "starting point" },
+      { hanzi: "下一站", pinyin: "xià yí zhàn", meaning: "next stop" },
+      { hanzi: "這一站", pinyin: "zhè yí zhàn", meaning: "this stop" },
+      { hanzi: "搭車", pinyin: "dāchē", meaning: "take transit" },
+      { hanzi: "下錯站", pinyin: "xià cuò zhàn", meaning: "get off at the wrong stop" },
+      { hanzi: "坐過站", pinyin: "zuò guò zhàn", meaning: "miss one's stop" },
+      { hanzi: "換線", pinyin: "huànxiàn", meaning: "change lines" },
+      { hanzi: "紅線", pinyin: "hóngxiàn", meaning: "Red Line" },
+      { hanzi: "藍線", pinyin: "lánxiàn", meaning: "Blue Line" },
+      { hanzi: "綠線", pinyin: "lǜxiàn", meaning: "Green Line" },
+      { hanzi: "黃線", pinyin: "huángxiàn", meaning: "Yellow Line" },
+      { hanzi: "橘線", pinyin: "júxiàn", meaning: "Orange Line" },
+      { hanzi: "棕線", pinyin: "zōngxiàn", meaning: "Brown Line" },
+      { hanzi: "指標", pinyin: "zhǐbiāo", meaning: "sign" },
+      { hanzi: "地圖", pinyin: "dìtú", meaning: "map" },
+      { hanzi: "站務員", pinyin: "zhànwùyuán", meaning: "station staff" },
+      { hanzi: "詢問", pinyin: "xúnwèn", meaning: "ask / inquire" },
+      { hanzi: "確認", pinyin: "quèrèn", meaning: "confirm" },
+      { hanzi: "幾號出口", pinyin: "jǐ hào chūkǒu", meaning: "which exit" },
+      { hanzi: "手扶梯", pinyin: "shǒufútī", meaning: "escalator" },
+      { hanzi: "電梯", pinyin: "diàntī", meaning: "elevator" },
+      { hanzi: "閘門", pinyin: "zhámén", meaning: "fare gate" },
+      { hanzi: "餘額", pinyin: "yú'é", meaning: "balance" },
+      { hanzi: "售票機", pinyin: "shòupiàojī", meaning: "ticket machine" },
+      { hanzi: "旅程", pinyin: "lǚchéng", meaning: "journey" },
+      { hanzi: "分鐘", pinyin: "fēnzhōng", meaning: "minute" },
+      { hanzi: "附近", pinyin: "fùjìn", meaning: "nearby" },
+
+      { hanzi: "靠近", pinyin: "kàojìn", meaning: "be close to" },
+      { hanzi: "行程", pinyin: "xíngchéng", meaning: "itinerary / trip" },
+      { hanzi: "最後一站", pinyin: "zuìhòu yí zhàn", meaning: "last stop" },
+      { hanzi: "離開", pinyin: "líkāi", meaning: "leave" },
+      { hanzi: "往前", pinyin: "wǎngqián", meaning: "forward" },
+      { hanzi: "往後", pinyin: "wǎnghòu", meaning: "backward" },
+      { hanzi: "正確", pinyin: "zhèngquè", meaning: "correct" },
+      { hanzi: "錯誤", pinyin: "cuòwù", meaning: "mistake / incorrect" },
+      { hanzi: "藍色", pinyin: "lánsè", meaning: "blue" },
+      { hanzi: "搭錯", pinyin: "dā cuò", meaning: "take the wrong one" },
+      { hanzi: "整段", pinyin: "zhěng duàn", meaning: "the whole section" },
+      { hanzi: "大約", pinyin: "dàyuē", meaning: "approximately" },
+      { hanzi: "反方向", pinyin: "fǎn fāngxiàng", meaning: "opposite direction" },
+      { hanzi: "乘客", pinyin: "chéngkè", meaning: "passenger" },
+      { hanzi: "準備", pinyin: "zhǔnbèi", meaning: "prepare" },
+      { hanzi: "站牌", pinyin: "zhànpái", meaning: "bus-stop sign" },
+      { hanzi: "公車站", pinyin: "gōngchēzhàn", meaning: "bus stop" },
+      { hanzi: "故宮", pinyin: "Gùgōng", meaning: "National Palace Museum" },
+      { hanzi: "北投", pinyin: "Běitóu", meaning: "Beitou" },
+      { hanzi: "新北投", pinyin: "Xīn Běitóu", meaning: "Xinbeitou" },
+      { hanzi: "泡溫泉", pinyin: "pào wēnquán", meaning: "soak in a hot spring" },
+      { hanzi: "粉紅色", pinyin: "fěnhóngsè", meaning: "pink" },
+      { hanzi: "列車", pinyin: "lièchē", meaning: "train" },
+      { hanzi: "緊張", pinyin: "jǐnzhāng", meaning: "nervous" },
+      { hanzi: "成就感", pinyin: "chéngjiùgǎn", meaning: "sense of achievement" },
+
+      { hanzi: "博愛座", pinyin: "bó'àizuò", meaning: "priority seat" },
+      { hanzi: "一般人", pinyin: "yìbān rén", meaning: "ordinary person" },
+      { hanzi: "優先", pinyin: "yōuxiān", meaning: "have priority" },
+      { hanzi: "使用", pinyin: "shǐyòng", meaning: "use" },
+      { hanzi: "認為", pinyin: "rènwéi", meaning: "think / believe" },
+      { hanzi: "座位", pinyin: "zuòwèi", meaning: "seat" },
+      { hanzi: "空著", pinyin: "kōngzhe", meaning: "be unoccupied" },
+      { hanzi: "任何人", pinyin: "rènhé rén", meaning: "anyone" },
+      { hanzi: "主動", pinyin: "zhǔdòng", meaning: "proactively" },
+      { hanzi: "讓座", pinyin: "ràngzuò", meaning: "give up one's seat" },
+      { hanzi: "應該", pinyin: "yīnggāi", meaning: "should" },
+      { hanzi: "不好意思", pinyin: "bù hǎoyìsi", meaning: "feel embarrassed" },
+      { hanzi: "開口", pinyin: "kāikǒu", meaning: "speak up / ask" },
+      { hanzi: "另外", pinyin: "lìngwài", meaning: "additionally" },
+      { hanzi: "身體", pinyin: "shēntǐ", meaning: "body" },
+      { hanzi: "狀況", pinyin: "zhuàngkuàng", meaning: "condition" },
+      { hanzi: "身體狀況", pinyin: "shēntǐ zhuàngkuàng", meaning: "physical condition" },
+      { hanzi: "卻", pinyin: "què", meaning: "yet / however" },
+      { hanzi: "車廂", pinyin: "chēxiāng", meaning: "train carriage" },
+      { hanzi: "擠", pinyin: "jǐ", meaning: "crowded" },
+      { hanzi: "同意", pinyin: "tóngyì", meaning: "agree" },
+      { hanzi: "看法", pinyin: "kànfǎ", meaning: "opinion" },
+      { hanzi: "理由", pinyin: "lǐyóu", meaning: "reason" }
+    ];
+
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const finishScreen = document.getElementById("finishScreen");
+    const startButton = document.getElementById("startButton");
+    const homeButton = document.getElementById("homeButton");
+    const restartButton = document.getElementById("restartButton");
+    const reviewButton = document.getElementById("reviewButton");
+    const nextButton = document.getElementById("nextButton");
+    const hanziWord = document.getElementById("hanziWord");
+    const pinyinWord = document.getElementById("pinyinWord");
+    const answerGrid = document.getElementById("answerGrid");
+    const feedback = document.getElementById("feedback");
+    const feedbackIcon = document.getElementById("feedbackIcon");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackText = document.getElementById("feedbackText");
+    const questionCount = document.getElementById("questionCount");
+    const liveScore = document.getElementById("liveScore");
+    const progressFill = document.getElementById("progressFill");
+    const progressTrack = document.querySelector(".progress-track");
+    const finalScore = document.getElementById("finalScore");
+    const finishTitle = document.getElementById("finishTitle");
+    const finishEyebrow = document.getElementById("finishEyebrow");
+    const finishSummary = document.getElementById("finishSummary");
+    const finishNote = document.getElementById("finishNote");
+
+    let quizQueue = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let answered = false;
+    let roundMistakes = [];
+    let reviewPool = [];
+    let mode = "full";
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function showScreen(target) {
+      [welcomeScreen, gameScreen, finishScreen].forEach((screen) => {
+        screen.hidden = screen !== target;
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startRound(words, nextMode) {
+      quizQueue = shuffle(words);
+      currentIndex = 0;
+      correctCount = 0;
+      roundMistakes = [];
+      mode = nextMode;
+      showScreen(gameScreen);
+      renderQuestion();
+    }
+
+    function buildChoices(current) {
+      const otherMeanings = shuffle(
+        vocabulary
+          .filter((item) => item.hanzi !== current.hanzi && item.meaning !== current.meaning)
+          .map((item) => item.meaning)
+      );
+      const choices = [current.meaning];
+      for (const meaning of otherMeanings) {
+        if (!choices.includes(meaning)) choices.push(meaning);
+        if (choices.length === 4) break;
+      }
+      return shuffle(choices);
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const current = quizQueue[currentIndex];
+      const choices = buildChoices(current);
+      const progress = (currentIndex / quizQueue.length) * 100;
+
+      hanziWord.textContent = current.hanzi;
+      pinyinWord.textContent = current.pinyin;
+      questionCount.textContent = `${mode === "review" ? "Review" : "Question"} ${currentIndex + 1} / ${quizQueue.length}`;
+      liveScore.textContent = `Correct: ${correctCount}`;
+      progressFill.style.width = `${progress}%`;
+      progressTrack.setAttribute("aria-valuenow", String(Math.round(progress)));
+      feedback.hidden = true;
+      feedback.classList.remove("is-wrong");
+      nextButton.hidden = true;
+      nextButton.textContent = currentIndex === quizQueue.length - 1 ? "See Score →" : "Next →";
+      answerGrid.replaceChildren();
+
+      choices.forEach((meaning, index) => {
+        const button = document.createElement("button");
+        const letter = document.createElement("span");
+        const text = document.createElement("span");
+        button.type = "button";
+        button.className = "answer-button";
+        button.dataset.meaning = meaning;
+        button.setAttribute("aria-label", `${String.fromCharCode(65 + index)}. ${meaning}`);
+        letter.className = "option-letter";
+        letter.textContent = String.fromCharCode(65 + index);
+        letter.setAttribute("aria-hidden", "true");
+        text.textContent = meaning;
+        button.append(letter, text);
+        button.addEventListener("click", () => chooseAnswer(button, meaning));
+        answerGrid.append(button);
+      });
+
+      requestAnimationFrame(() => answerGrid.querySelector("button")?.focus({ preventScroll: true }));
+    }
+
+    function chooseAnswer(selectedButton, selectedMeaning) {
+      if (answered) return;
+      answered = true;
+      const current = quizQueue[currentIndex];
+      const isCorrect = selectedMeaning === current.meaning;
+      const buttons = [...answerGrid.querySelectorAll("button")];
+
+      buttons.forEach((button) => {
+        button.disabled = true;
+        if (button.dataset.meaning === current.meaning) button.classList.add("correct");
+      });
+
+      if (isCorrect) {
+        correctCount += 1;
+        feedbackIcon.textContent = "✓";
+        feedbackTitle.textContent = "Correct!";
+        feedbackText.textContent = `${current.hanzi} means “${current.meaning}.”`;
+      } else {
+        selectedButton.classList.add("wrong");
+        roundMistakes.push(current);
+        feedback.classList.add("is-wrong");
+        feedbackIcon.textContent = "×";
+        feedbackTitle.textContent = "Not quite.";
+        feedbackText.textContent = `The correct answer is “${current.meaning}.”`;
+      }
+
+      liveScore.textContent = `Correct: ${correctCount}`;
+      feedback.hidden = false;
+      nextButton.hidden = false;
+      nextButton.focus({ preventScroll: true });
+    }
+
+    function goNext() {
+      if (!answered) return;
+      currentIndex += 1;
+      if (currentIndex < quizQueue.length) {
+        renderQuestion();
+      } else {
+        finishRound();
+      }
+    }
+
+    function finishRound() {
+      const total = quizQueue.length;
+      const score = Math.round((correctCount / total) * 100);
+      reviewPool = [...roundMistakes];
+      finalScore.textContent = String(score);
+      finishEyebrow.textContent = mode === "review" ? "Review complete" : "Round complete";
+      finishTitle.textContent = score === 100 ? "Perfect, Ayana!" : score >= 80 ? "Great work, Ayana!" : "Nice effort, Ayana!";
+      finishSummary.textContent = `You answered ${correctCount} of ${total} ${total === 1 ? "word" : "words"} correctly.`;
+      reviewButton.hidden = reviewPool.length === 0;
+      finishNote.textContent = reviewPool.length === 0
+        ? "Every word is correct - your vocabulary is in full bloom!"
+        : `${reviewPool.length} ${reviewPool.length === 1 ? "word is" : "words are"} ready for another quick review.`;
+      showScreen(finishScreen);
+      restartButton.focus({ preventScroll: true });
+    }
+
+    startButton.addEventListener("click", () => startRound(vocabulary, "full"));
+    restartButton.addEventListener("click", () => startRound(vocabulary, "full"));
+    reviewButton.addEventListener("click", () => {
+      if (reviewPool.length) startRound(reviewPool, "review");
+    });
+    nextButton.addEventListener("click", goNext);
+    homeButton.addEventListener("click", () => showScreen(welcomeScreen));
+
+    document.addEventListener("keydown", (event) => {
+      if (gameScreen.hidden) return;
+      if (answered && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        goNext();
+        return;
+      }
+      if (answered) return;
+      const key = event.key.toLowerCase();
+      const lookup = { a: 0, "1": 0, b: 1, "2": 1, c: 2, "3": 2, d: 3, "4": 3 };
+      if (Object.hasOwn(lookup, key)) {
+        const button = answerGrid.querySelectorAll("button")[lookup[key]];
+        if (button) button.click();
+      }
+    });
+
+    if (vocabulary.length !== 93 || new Set(vocabulary.map((item) => item.hanzi)).size !== vocabulary.length) {
+      console.error("Vocabulary validation failed.");
+    }
+  </script>
+</body>
+</html>
